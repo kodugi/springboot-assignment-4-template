@@ -57,9 +57,7 @@ class UserService(
         return accessToken
     }
 
-    fun logout(
-        token: String,
-    ) {
+    fun logout(token: String) {
         // 1. 토큰이 유효한지 검사 (이미 만료된 거면 굳이 블랙리스트 넣을 필요 없음)
         if (!jwtTokenProvider.validateToken(token)) {
             return
@@ -71,10 +69,10 @@ class UserService(
         // 3. 남은 시간만큼만 Redis에 "logout" 이라고 저장
         if (expiration > 0) {
             redisTemplate.opsForValue().set(
-                token,              // Key: 토큰 값
-                "logout",           // Value: 그냥 "logout" 문자열
-                expiration,         // Duration: 남은 시간
-                TimeUnit.MILLISECONDS // 단위: 밀리초
+                token, // Key: 토큰 값
+                "logout", // Value: 그냥 "logout" 문자열
+                expiration, // Duration: 남은 시간
+                TimeUnit.MILLISECONDS, // 단위: 밀리초
             )
         }
     }

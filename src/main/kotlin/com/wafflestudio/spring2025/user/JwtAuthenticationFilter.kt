@@ -3,10 +3,10 @@ package com.wafflestudio.spring2025.user
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
 import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.OncePerRequestFilter
-import org.springframework.data.redis.core.StringRedisTemplate
 
 @Component
 class JwtAuthenticationFilter(

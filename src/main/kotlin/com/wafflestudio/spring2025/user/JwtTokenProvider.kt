@@ -51,14 +51,16 @@ class JwtTokenProvider(
         }
         return false
     }
+
     fun getRemainingExpiration(token: String): Long {
-        val expiration = Jwts
-            .parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .body
-            .expiration
+        val expiration =
+            Jwts
+                .parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .body
+                .expiration
 
         val now = Date()
         return expiration.time - now.time
