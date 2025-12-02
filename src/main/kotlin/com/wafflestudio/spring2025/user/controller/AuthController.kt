@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import com.wafflestudio.spring2025.user.LoggedInUser
+import com.wafflestudio.spring2025.user.model.User
+import io.swagger.v3.oas.annotations.Parameter
+import org.springframework.web.bind.annotation.RequestHeader
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -59,5 +63,26 @@ class AuthController(
                 password = loginRequest.password,
             )
         return ResponseEntity.status(HttpStatus.CREATED).body(LoginResponse(token))
+    }
+
+    @Operation(summary = "로그아웃", description = "현재 사용 중인 토큰을 만료(블랙리스트 처리)시킵니다")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "로그아웃 성공"),
+        ],
+    )
+    @PostMapping("/logout")
+    fun logout( // 토큰에서 유저 정보를 뽑아옵니다
+        @Parameter(hidden = true) @RequestHeader("Authorization") bearerToken: String, // 헤더에서 토큰 문자열을 가져옵니다
+    ): ResponseEntity<Unit> {
+        // "Bearer " 라는 앞부분을 잘라내고 순수 토큰만 남깁니다.
+        if (bearerToken.startsWith("Bearer ")) {
+            val token = bearerToken.substring(7)
+
+            // UserService에게 "이 유저, 이 토큰 차단해줘"라고 시킵니다.
+            userService.logout(token)
+        }
+
+        return ResponseEntity.ok().build()
     }
 }

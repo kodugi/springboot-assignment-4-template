@@ -37,10 +37,9 @@ class UserController(
 
     @PostMapping("/logout")
     fun logout(
-        @Parameter(hidden = true) @LoggedInUser user: User,
         @RequestParam token: String,
     ): ResponseEntity<Unit> {
-        userService.logout(user, token)
+        userService.logout(token)
         return ResponseEntity.ok().build()
     }
 }
