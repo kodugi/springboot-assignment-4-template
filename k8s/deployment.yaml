@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app
+spec:
+  replicas: 2 # Pod 여러 개 환경 테스트 요구사항 충족
+  selector:
+    matchLabels:
+      app: spring-app
+  template:
+    metadata:
+      labels:
+        app: spring-app
+    spec:
+      containers:
+        - name: spring-app
+          image: ghcr.io/kodugi/springboot-assignment-4-template:latest # GitHub Actions에서 빌드할 이미지
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: REDIS_HOST
+              value: "my-redis-master" # Helm이 만든 Redis 서비스 이름
+            - name: REDIS_PASSWORD
+              value: "redis1234"
+            - name: MYSQL_HOST # 필요하다면 추가
+              value: "my-mysql"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-app-svc
+spec:
+  type: NodePort # 외부 접속용
+  selector:
+    app: spring-app
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30080 # EC2 보안그룹에서 열어준 포트
